@@ -1,35 +1,23 @@
-### A Pluto.jl notebook ###
-# v0.19.41
+function arePointsOnLine(coords)
+    x, y, z = coords[1, 1], coords[1, 2], coords[1, 3]
+    x1, y1, z1 = coords[2, 1], coords[2, 2], coords[2, 3]
+    x2, y2, z2 = coords[3, 1], coords[3, 2], coords[3, 3]
+    # if ((x == x1) && (y == y1) && (z == z1)) || ((x == x2) && (y == y2) && (z == z2)) || ((x1 == x2) && (y1 == y2) && (z1 == z2))
+    #     return true
+    # end
+    if (x - x1) / (x2 - x1) == (y - y1) / (y2 - y1) == (z - z1) / (z2 - z1)
+        return true
+    end
+    return false
+end
 
-using Markdown
-using InteractiveUtils
-
-# ╔═╡ dc315aaa-fda9-11ee-3951-41c7243b53ea
-print("A = ")
-
-# ╔═╡ e5359940-8445-454f-8a32-8383d8442b5c
-first_coords = split(readline())
-
-# ╔═╡ a16ad05d-c418-45d7-84be-f6f5da3116b2
-print("B = ")
-
-# ╔═╡ 34ce2855-8fd8-439e-8e7d-14a7138536cb
-second_coords = split(readline())
-
-# ╔═╡ 4af44adb-f5a9-409d-8bbc-93c8a03205d6
-print("C = ")
-
-# ╔═╡ 9b881c67-3776-4550-9bd9-3bdfbc788c49
-third_coords = split(readline())
-
-# ╔═╡ 122ffbb3-b504-4d65-b9af-68da2413c57a
-println(first_coords, second_coords, third_coords)
-
-# ╔═╡ Cell order:
-# ╠═dc315aaa-fda9-11ee-3951-41c7243b53ea
-# ╠═e5359940-8445-454f-8a32-8383d8442b5c
-# ╠═a16ad05d-c418-45d7-84be-f6f5da3116b2
-# ╠═34ce2855-8fd8-439e-8e7d-14a7138536cb
-# ╠═4af44adb-f5a9-409d-8bbc-93c8a03205d6
-# ╠═9b881c67-3776-4550-9bd9-3bdfbc788c49
-# ╠═122ffbb3-b504-4d65-b9af-68da2413c57a
+name_coords = ["A", "B", "C"]
+coords = hcat([0, 0, 0], [0, 0, 0], [0, 0, 0])
+for i in 1:3
+    print(name_coords[i] * " = ")
+    input_coords = split(readline())
+    for j in 1:3
+        coords[i, j] = parse(Int64, input_coords[j])
+    end
+end
+println(arePointsOnLine(coords))
