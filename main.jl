@@ -30,6 +30,7 @@ for i in 1:3
         coords[i, j] = parse(Int64, input_coords[j])
     end
 end
+firstPoint, secondPoint, thirdPoint = [coords[1, 1] coords[1, 2] coords[1, 3]], [coords[2, 1] coords[2, 2] coords[2, 3]], [coords[3, 1] coords[3, 2] coords[3, 3]]
 
 if arePointsOnLine(coords)
     println("Points are on one line")
@@ -37,4 +38,9 @@ else
     println("Points are not on one line")
 end
 
-println(areVectorsPerpendicular([coords[1, 1] coords[1, 2] coords[1, 3]], [coords[2, 1] coords[2, 2] coords[2, 3]], [coords[3, 1] coords[3, 2] coords[3, 3]]))
+if (areVectorsPerpendicular(firstPoint, secondPoint, thirdPoint))
+    middlePoint = (thirdPoint + secondPoint) / 2
+    vector = middlePoint - firstPoint
+    fourthPoint = middlePoint + vector
+    println(fourthPoint)
+end
