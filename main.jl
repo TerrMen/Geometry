@@ -1,4 +1,5 @@
 using LinearAlgebra
+using Plots
 
 function arePointsOnLine(coords)
     x, y, z = coords[1, 1], coords[1, 2], coords[1, 3]
@@ -38,9 +39,18 @@ else
     println("Points are not on one line")
 end
 
-if (areVectorsPerpendicular(firstPoint, secondPoint, thirdPoint))
+if areVectorsPerpendicular(firstPoint, secondPoint, thirdPoint)
     middlePoint = (thirdPoint + secondPoint) / 2
     vector = middlePoint - firstPoint
     fourthPoint = middlePoint + vector
-    println(fourthPoint)
+    x = [firstPoint[1], secondPoint[1], thirdPoint[1], fourthPoint[1]]
+    y = [firstPoint[2], secondPoint[2], thirdPoint[2], fourthPoint[2]]
+    # println(fourthPoint)
+else
+    x = [firstPoint[1], secondPoint[1], thirdPoint[1]]
+    y = [firstPoint[2], secondPoint[2], thirdPoint[2]]
 end
+
+# plt = plot(firstPoint[1], firstPoint[2])
+plt = plot(x, y)
+display(plt)
