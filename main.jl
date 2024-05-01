@@ -36,21 +36,18 @@ firstPoint, secondPoint, thirdPoint = [coords[1, 1] coords[1, 2] coords[1, 3]], 
 if arePointsOnLine(coords)
     println("Points are on one line")
 else
-    println("Points are not on one line")
+    if areVectorsPerpendicular(firstPoint, secondPoint, thirdPoint)
+        middlePoint = (thirdPoint + secondPoint) / 2
+        vector = middlePoint - firstPoint
+        fourthPoint = middlePoint + vector
+        x = [firstPoint[1], secondPoint[1], thirdPoint[1], fourthPoint[1]]
+        y = [firstPoint[2], secondPoint[2], thirdPoint[2], fourthPoint[2]]
+        # println(fourthPoint)
+    else
+        x = [firstPoint[1], secondPoint[1], thirdPoint[1]]
+        y = [firstPoint[2], secondPoint[2], thirdPoint[2]]
+    end
+    
+    # plt = plot(firstPoint[1], firstPoint[2])
+    scatter(x, y, label="")
 end
-
-if areVectorsPerpendicular(firstPoint, secondPoint, thirdPoint)
-    middlePoint = (thirdPoint + secondPoint) / 2
-    vector = middlePoint - firstPoint
-    fourthPoint = middlePoint + vector
-    x = [firstPoint[1], secondPoint[1], thirdPoint[1], fourthPoint[1]]
-    y = [firstPoint[2], secondPoint[2], thirdPoint[2], fourthPoint[2]]
-    # println(fourthPoint)
-else
-    x = [firstPoint[1], secondPoint[1], thirdPoint[1]]
-    y = [firstPoint[2], secondPoint[2], thirdPoint[2]]
-end
-
-# plt = plot(firstPoint[1], firstPoint[2])
-plt = plot(x, y)
-display(plt)
