@@ -38,10 +38,8 @@ end
 function findHalfPlaneToSquare(firstPoint, secondPoint, thirdPoint, fourthPoint)
     AB = vec(secondPoint - firstPoint)
     AC = vec(thirdPoint - firstPoint)
-    if AC == [-AB[2], AB[1], AC[3]]
-        vector = cross(AC, AB)
-        println(vector)
-    end
+    vector = cross(AB, AC)
+    println(vector)
 end
 
 # function findHalfPlaneToTriangle(firstPoint, secondPoint, thirdPoint)
