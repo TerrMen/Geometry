@@ -35,11 +35,11 @@ function setCoords()
     return [coords[1, 1] coords[1, 2] coords[1, 3]], [coords[2, 1] coords[2, 2] coords[2, 3]], [coords[3, 1] coords[3, 2] coords[3, 3]]
 end
 
-function findHalfPlaneToSquare(firstPoint, secondPoint, thirdPoint, fourthPoint)
+function findVectorProduct(firstPoint, secondPoint, thirdPoint)
     AB = vec(secondPoint - firstPoint)
     AC = vec(thirdPoint - firstPoint)
-    vector = cross(AB, AC)
-    println(vector)
+    vectorProduct = cross(AB, AC)
+    vector = vectorProduct / norm(vectorProduct) * norm(AC)
 end
 
 # function findHalfPlaneToTriangle(firstPoint, secondPoint, thirdPoint)
@@ -55,14 +55,21 @@ else
         middlePoint = (thirdPoint + secondPoint) / 2
         vector = middlePoint - firstPoint
         fourthPoint = middlePoint + vector
-        findHalfPlaneToSquare(firstPoint, secondPoint, thirdPoint, fourthPoint)
-        x = [firstPoint[1], secondPoint[1], thirdPoint[1], fourthPoint[1]]
-        y = [firstPoint[2], secondPoint[2], thirdPoint[2], fourthPoint[2]]
+        vectorProduct = findVectorProduct(firstPoint, secondPoint, thirdPoint)
+        fifthPoint = vec(firstPoint) + vectorProduct
+        sixthPoint = vec(secondPoint) + vectorProduct
+        seventhPoint = vec(thirdPoint) + vectorProduct
+        eighthPoint = vec(fourthPoint) + vectorProduct
+        x = [firstPoint[1], secondPoint[1], thirdPoint[1], fourthPoint[1],
+        fifthPoint[1], sixthPoint[1], seventhPoint[1], eighthPoint[1]]
+        y = [firstPoint[2], secondPoint[2], thirdPoint[2], fourthPoint[2],
+        fifthPoint[2], sixthPoint[2], seventhPoint[2], eighthPoint[2]]
+        cube = scatter(x, y, label="куб")
     else
         x = [firstPoint[1], secondPoint[1], thirdPoint[1]]
         y = [firstPoint[2], secondPoint[2], thirdPoint[2]]
     end
     
     # plt = plot(firstPoint[1], firstPoint[2])
-    scatter(x, y, label="")
+    # pyramid = scatter(x, y, label="пирамида")
 end
