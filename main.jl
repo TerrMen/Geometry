@@ -39,7 +39,6 @@ function findVectorProduct(firstPoint, secondPoint, thirdPoint)
     AB = vec(secondPoint - firstPoint)
     AC = vec(thirdPoint - firstPoint)
     vectorProduct = cross(AB, AC)
-    vector = vectorProduct / norm(vectorProduct) * norm(AC)
 end
 
 # function findHalfPlaneToTriangle(firstPoint, secondPoint, thirdPoint)
@@ -51,25 +50,36 @@ firstPoint, secondPoint, thirdPoint = setCoords()
 if arePointsOnLine(firstPoint, secondPoint, thirdPoint)
     println("Points are on one line")
 else
+    norma = norm(vec(thirdPoint - firstPoint))
     if areVectorsPerpendicular(firstPoint, secondPoint, thirdPoint)
         middlePoint = (thirdPoint + secondPoint) / 2
         vector = middlePoint - firstPoint
         fourthPoint = middlePoint + vector
         vectorProduct = findVectorProduct(firstPoint, secondPoint, thirdPoint)
-        fifthPoint = vec(firstPoint) + vectorProduct
-        sixthPoint = vec(secondPoint) + vectorProduct
-        seventhPoint = vec(thirdPoint) + vectorProduct
-        eighthPoint = vec(fourthPoint) + vectorProduct
-        x = [firstPoint[1], secondPoint[1], thirdPoint[1], fourthPoint[1],
+
+        vectorForCube = vectorProduct / norm(vectorProduct) * norma
+        fifthPoint = vec(firstPoint) + vectorForCube
+        sixthPoint = vec(secondPoint) + vectorForCube
+        seventhPoint = vec(thirdPoint) + vectorForCube
+        eighthPoint = vec(fourthPoint) + vectorForCube
+        x1 = [firstPoint[1], secondPoint[1], thirdPoint[1], fourthPoint[1],
         fifthPoint[1], sixthPoint[1], seventhPoint[1], eighthPoint[1]]
-        y = [firstPoint[2], secondPoint[2], thirdPoint[2], fourthPoint[2],
+        y1 = [firstPoint[2], secondPoint[2], thirdPoint[2], fourthPoint[2],
         fifthPoint[2], sixthPoint[2], seventhPoint[2], eighthPoint[2]]
-        cube = scatter(x, y, label="куб")
+        savefig(plot(scatter(x1, y1, label="")), "cube")
+
+        vectorForPyramid = vectorProduct / norm(vectorProduct) * (norma * sqrt(2) / 2)
+        top = vec(middlePoint) + vectorForPyramid
+        x2 = [firstPoint[1], secondPoint[1], thirdPoint[1], fourthPoint[1], top[1]]
+        y2 = [firstPoint[2], secondPoint[2], thirdPoint[2], fourthPoint[2], top[2]]
+        savefig(plot(scatter(x2, y2, label="")), "pyramid")
     else
-        x = [firstPoint[1], secondPoint[1], thirdPoint[1]]
-        y = [firstPoint[2], secondPoint[2], thirdPoint[2]]
+        middlePoint = (firstPoint + secondPoint + thirdPoint) / 3
+        vectorProduct = findVectorProduct(firstPoint, secondPoint, thirdPoint)
+        vectorForTetrahedron = vectorProduct / norm(vectorProduct) * (norma * sqrt(6) / 3)
+        fourthPoint = vec(middlePoint) + vectorForTetrahedron
+        x = [firstPoint[1], secondPoint[1], thirdPoint[1], fourthPoint[1]]
+        y = [firstPoint[2], secondPoint[2], thirdPoint[2], fourthPoint[2]   ]
+        savefig(plot(scatter(x, y, label="")), "tetrahedron")
     end
-    
-    # plt = plot(firstPoint[1], firstPoint[2])
-    # pyramid = scatter(x, y, label="пирамида")
 end
