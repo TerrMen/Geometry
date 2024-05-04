@@ -24,12 +24,12 @@ end
 
 function setCoords()
     name_coords = ["A", "B", "C"]
-    coords = [0 0 0; 0 0 0; 0 0 0]
+    coords = [0.0 0.0 0.0; 0.0 0.0 0.0; 0.0 0.0 0.0]
     for i in 1:3
         print(name_coords[i] * " = ")
         input_coords = split(readline())
         for j in 1:3
-            coords[i, j] = parse(Int64, input_coords[j])
+            coords[i, j] = parse(Float64, input_coords[j])
         end
     end
     return [coords[1, 1] coords[1, 2] coords[1, 3]], [coords[2, 1] coords[2, 2] coords[2, 3]], [coords[3, 1] coords[3, 2] coords[3, 3]]
@@ -53,7 +53,21 @@ function drawCube(firstPoint, secondPoint, thirdPoint, fourthPoint)
     fifthPoint[1], sixthPoint[1], seventhPoint[1], eighthPoint[1]]
     y = [firstPoint[2], secondPoint[2], thirdPoint[2], fourthPoint[2],
     fifthPoint[2], sixthPoint[2], seventhPoint[2], eighthPoint[2]]
-    savefig(plot(scatter(x, y, label="")), "cube")
+    minx = min(firstPoint[1], secondPoint[1], thirdPoint[1], fourthPoint[1],
+    fifthPoint[1], sixthPoint[1], seventhPoint[1], eighthPoint[1])
+    maxx = max(firstPoint[1], secondPoint[1], thirdPoint[1], fourthPoint[1],
+    fifthPoint[1], sixthPoint[1], seventhPoint[1], eighthPoint[1])
+    miny = min(firstPoint[2], secondPoint[2], thirdPoint[2], fourthPoint[2],
+    fifthPoint[2], sixthPoint[2], seventhPoint[2], eighthPoint[2])
+    maxy = max(firstPoint[2], secondPoint[2], thirdPoint[2], fourthPoint[2],
+    fifthPoint[2], sixthPoint[2], seventhPoint[2], eighthPoint[2])
+    # savefig(plot(scatter(x, y, xlim=(minx - 1, maxx + 1), ylim=(miny - 1, maxy + 1), label="")), "cube")
+    cube = scatter!(x, y, xlim=(minx - 1, maxx + 1), ylim=(miny - 1, maxy + 1), label="")
+    for i in 1:8
+
+        annotate!(x[i], y[i] + 0.2, ("Test", 9, :black))
+    end
+    return cube
 end
 
 function drawPyramid(firstPoint, secondPoint, thirdPoint, fourthPoint)
@@ -63,7 +77,12 @@ function drawPyramid(firstPoint, secondPoint, thirdPoint, fourthPoint)
     top = vec(middlePoint) + vectorForPyramid
     x = [firstPoint[1], secondPoint[1], thirdPoint[1], fourthPoint[1], top[1]]
     y = [firstPoint[2], secondPoint[2], thirdPoint[2], fourthPoint[2], top[2]]
-    savefig(plot(scatter(x, y, label="")), "pyramid")
+    minx = min(firstPoint[1], secondPoint[1], thirdPoint[1], fourthPoint[1], top[1])
+    maxx = max(firstPoint[1], secondPoint[1], thirdPoint[1], fourthPoint[1], top[1])
+    miny = min(firstPoint[2], secondPoint[2], thirdPoint[2], fourthPoint[2], top[2])
+    maxy = max(firstPoint[2], secondPoint[2], thirdPoint[2], fourthPoint[2], top[2])
+    # savefig(plot(scatter(x, y, xlim=(minx - 1, maxx + 1), ylim=(miny - 1, maxy + 1), label="")))
+    scatter(x, y, xlim=(minx - 1, maxx + 1), ylim=(miny - 1, maxy + 1), label="")
 end
 
 function drawTetrahedron(firstPoint, secondPoint, thirdPoint)
@@ -71,10 +90,14 @@ function drawTetrahedron(firstPoint, secondPoint, thirdPoint)
     vectorProduct = findVectorProduct(firstPoint, secondPoint, thirdPoint)
     middlePoint = (firstPoint + secondPoint + thirdPoint) / 3
     vectorForTetrahedron = vectorProduct / norm(vectorProduct) * (norma * sqrt(6) / 3)
-    fourthPoint = vec(middlePoint) + vectorForTetrahedron
-    x = [firstPoint[1], secondPoint[1], thirdPoint[1], fourthPoint[1]]
-    y = [firstPoint[2], secondPoint[2], thirdPoint[2], fourthPoint[2]]
-    savefig(plot(scatter(x, y, label="")), "tetrahedron")
+    top = vec(middlePoint) + vectorForTetrahedron
+    x = [firstPoint[1], secondPoint[1], thirdPoint[1], top[1]]
+    y = [firstPoint[2], secondPoint[2], thirdPoint[2], top[2]]
+    minx = min(firstPoint[1], secondPoint[1], thirdPoint[1], top[1])
+    maxx = max(firstPoint[1], secondPoint[1], thirdPoint[1], top[1])
+    miny = min(firstPoint[2], secondPoint[2], thirdPoint[2], top[2])
+    maxy = max(firstPoint[2], secondPoint[2], thirdPoint[2], top[2])
+    savefig(plot(scatter(x, y, xlim=(minx - 1, maxx + 1), ylim=(miny - 1, maxy + 1), label="")), "tetrahedron")
 end
 
 firstPoint, secondPoint, thirdPoint = setCoords()
@@ -87,8 +110,9 @@ else
         vector = middlePoint - firstPoint
         fourthPoint = middlePoint + vector
 
-        drawCube(firstPoint, secondPoint, thirdPoint, fourthPoint)
-        drawPyramid(firstPoint, secondPoint, thirdPoint, fourthPoint)
+        cube = drawCube(firstPoint, secondPoint, thirdPoint, fourthPoint)
+        plot(cube)
+        # drawPyramid(firstPoint, secondPoint, thirdPoint, fourthPoint)
     else
         drawTetrahedron(firstPoint, secondPoint, thirdPoint)
     end
