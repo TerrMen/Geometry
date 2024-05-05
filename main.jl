@@ -62,11 +62,11 @@ function drawCube(firstPoint, secondPoint, thirdPoint, fourthPoint)
     maxy = max(firstPoint[2], secondPoint[2], thirdPoint[2], fourthPoint[2],
     fifthPoint[2], sixthPoint[2], seventhPoint[2], eighthPoint[2])
     # savefig(plot(scatter(x, y, xlim=(minx - 1, maxx + 1), ylim=(miny - 1, maxy + 1), label="")), "cube")
-    cube = scatter!(x, y, xlim=(minx - 1, maxx + 1), ylim=(miny - 1, maxy + 1), label="")
+    cube = scatter(x, y, xlim=(minx - 1, maxx + 1), ylim=(miny - 1, maxy + 1), label="")
     for i in 1:8
-
-        annotate!(x[i], y[i] + 0.2, ("Test", 9, :black))
+        annotate!(x[i], y[i] + 0.2, ("(" * string(round(x[i], digits=2)) * ", " * string(round(x[i], digits=2)) * ")", 9, :black))
     end
+    title!("cube")
     return cube
 end
 
@@ -82,7 +82,12 @@ function drawPyramid(firstPoint, secondPoint, thirdPoint, fourthPoint)
     miny = min(firstPoint[2], secondPoint[2], thirdPoint[2], fourthPoint[2], top[2])
     maxy = max(firstPoint[2], secondPoint[2], thirdPoint[2], fourthPoint[2], top[2])
     # savefig(plot(scatter(x, y, xlim=(minx - 1, maxx + 1), ylim=(miny - 1, maxy + 1), label="")))
-    scatter(x, y, xlim=(minx - 1, maxx + 1), ylim=(miny - 1, maxy + 1), label="")
+    pyramid = scatter(x, y, xlim=(minx - 1, maxx + 1), ylim=(miny - 1, maxy + 1), label="")
+    for i in 1:5
+        annotate!(x[i], y[i] + 0.2, ("(" * string(round(x[i], digits=2)) * ", " * string(round(y[i], digits=2)) * ")", 9, :black))
+    end
+    title!("pyramid")
+    return pyramid
 end
 
 function drawTetrahedron(firstPoint, secondPoint, thirdPoint)
@@ -97,7 +102,13 @@ function drawTetrahedron(firstPoint, secondPoint, thirdPoint)
     maxx = max(firstPoint[1], secondPoint[1], thirdPoint[1], top[1])
     miny = min(firstPoint[2], secondPoint[2], thirdPoint[2], top[2])
     maxy = max(firstPoint[2], secondPoint[2], thirdPoint[2], top[2])
-    savefig(plot(scatter(x, y, xlim=(minx - 1, maxx + 1), ylim=(miny - 1, maxy + 1), label="")), "tetrahedron")
+    # savefig(plot(scatter(x, y, xlim=(minx - 1, maxx + 1), ylim=(miny - 1, maxy + 1), label="")), "tetrahedron")
+    tetrahedron = scatter(x, y, xlim=(minx - 1, maxx + 1), ylim=(miny - 1, maxy + 1), label="")
+    for i in 1:4
+        annotate!(x[i], y[i] + 0.2, ("(" * string(round(x[i], digits=2)) * ", " * string(round(y[i], digits=2)) * ")", 9, :black))
+    end
+    title!("tetrahedron")
+    return tetrahedron
 end
 
 firstPoint, secondPoint, thirdPoint = setCoords()
@@ -110,10 +121,8 @@ else
         vector = middlePoint - firstPoint
         fourthPoint = middlePoint + vector
 
-        cube = drawCube(firstPoint, secondPoint, thirdPoint, fourthPoint)
-        plot(cube)
-        # drawPyramid(firstPoint, secondPoint, thirdPoint, fourthPoint)
+        plot(drawCube(firstPoint, secondPoint, thirdPoint, fourthPoint), drawPyramid(firstPoint, secondPoint, thirdPoint, fourthPoint))
     else
-        drawTetrahedron(firstPoint, secondPoint, thirdPoint)
+        plot(drawTetrahedron(firstPoint, secondPoint, thirdPoint))
     end
 end
