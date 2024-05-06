@@ -13,15 +13,6 @@ function arePointsOnLine(firstPoint, secondPoint, thirdPoint)
     return false
 end
 
-function areVectorsPerpendicular(firstPoint, secondPoint, thirdPoint)
-    vector1 = secondPoint - firstPoint
-    vector2 = thirdPoint - firstPoint
-    if (dot(vector1, vector2) == 0)
-        return true
-    end
-    return false
-end
-
 function setCoords()
     name_coords = ["A", "B", "C"]
     coords = [0.0 0.0 0.0; 0.0 0.0 0.0; 0.0 0.0 0.0]
@@ -35,24 +26,33 @@ function setCoords()
     return [coords[1, 1] coords[1, 2] coords[1, 3]], [coords[2, 1] coords[2, 2] coords[2, 3]], [coords[3, 1] coords[3, 2] coords[3, 3]]
 end
 
-function findVectorProduct(firstPoint, secondPoint, thirdPoint)
+function buildCube(firstPoint, secondPoint, extraPoint)
+    norma = norm(vec(secondPoint - firstPoint))
     AB = vec(secondPoint - firstPoint)
-    AC = vec(thirdPoint - firstPoint)
-    vectorProduct = cross(AB, AC)
+    AC = vec(extraPoint - firstPoint)
+    vectorForCube = cross(AB, cross(AC, AB))
+    vectorForCube = vectorForCube / norm(vectorForCube) * norma
+    thirdPoint = vec(firstPoint) + vectorForCube
+    fourthPoint = thirdPoint + AB
+
+    height = cross(AB, vectorForCube)
+    height = height / norm(height) * norma
+    fifthPoint = vec(firstPoint) + height
+    sixthPoint = vec(secondPoint) + height
+    seventhPoint = vec(thirdPoint) + height
+    eighthPoint = vec(fourthPoint) + height
+
+    drawCube(firstPoint, secondPoint, thirdPoint, fourthPoint, 
+    fifthPoint, sixthPoint, seventhPoint, eighthPoint)
 end
 
-function drawCube(firstPoint, secondPoint, thirdPoint, fourthPoint)
-    norma = norm(vec(thirdPoint - firstPoint))
-    vectorProduct = findVectorProduct(firstPoint, secondPoint, thirdPoint)
-    vectorForCube = vectorProduct / norm(vectorProduct) * norma
-    fifthPoint = vec(firstPoint) + vectorForCube
-    sixthPoint = vec(secondPoint) + vectorForCube
-    seventhPoint = vec(thirdPoint) + vectorForCube
-    eighthPoint = vec(fourthPoint) + vectorForCube
+function drawCube(firstPoint, secondPoint, thirdPoint, fourthPoint, 
+    fifthPoint, sixthPoint, seventhPoint, eighthPoint)
     x = [firstPoint[1], secondPoint[1], thirdPoint[1], fourthPoint[1],
     fifthPoint[1], sixthPoint[1], seventhPoint[1], eighthPoint[1]]
     y = [firstPoint[2], secondPoint[2], thirdPoint[2], fourthPoint[2],
     fifthPoint[2], sixthPoint[2], seventhPoint[2], eighthPoint[2]]
+
     minx = min(firstPoint[1], secondPoint[1], thirdPoint[1], fourthPoint[1],
     fifthPoint[1], sixthPoint[1], seventhPoint[1], eighthPoint[1])
     maxx = max(firstPoint[1], secondPoint[1], thirdPoint[1], fourthPoint[1],
@@ -61,10 +61,10 @@ function drawCube(firstPoint, secondPoint, thirdPoint, fourthPoint)
     fifthPoint[2], sixthPoint[2], seventhPoint[2], eighthPoint[2])
     maxy = max(firstPoint[2], secondPoint[2], thirdPoint[2], fourthPoint[2],
     fifthPoint[2], sixthPoint[2], seventhPoint[2], eighthPoint[2])
-    # savefig(plot(scatter(x, y, xlim=(minx - 1, maxx + 1), ylim=(miny - 1, maxy + 1), label="")), "cube")
+
     cube = scatter(x, y, xlim=(minx - 1, maxx + 1), ylim=(miny - 1, maxy + 1), label="")
     for i in 1:8
-        annotate!(x[i], y[i] + 0.2, ("(" * string(round(x[i], digits=2)) * ", " * string(round(x[i], digits=2)) * ")", 9, :black))
+        annotate!(x[i], y[i] + 0.2, ("(" * string(round(x[i], digits=2)) * ", " * string(round(y[i], digits=2)) * ")", 9, :black))
     end
     title!("cube")
     return cube
@@ -111,18 +111,12 @@ function drawTetrahedron(firstPoint, secondPoint, thirdPoint)
     return tetrahedron
 end
 
-firstPoint, secondPoint, thirdPoint = setCoords()
+firstPoint, secondPoint, extraPoint = setCoords()
 
-if arePointsOnLine(firstPoint, secondPoint, thirdPoint)
+if arePointsOnLine(firstPoint, secondPoint, extraPoint)
     println("Points are on one line")
 else
-    if areVectorsPerpendicular(firstPoint, secondPoint, thirdPoint)
-        middlePoint = (thirdPoint + secondPoint) / 2
-        vector = middlePoint - firstPoint
-        fourthPoint = middlePoint + vector
-
-        plot(drawCube(firstPoint, secondPoint, thirdPoint, fourthPoint), drawPyramid(firstPoint, secondPoint, thirdPoint, fourthPoint))
-    else
-        plot(drawTetrahedron(firstPoint, secondPoint, thirdPoint))
-    end
+    plot(buildCube(firstPoint, secondPoint, extraPoint))
+    # plot(drawCube(firstPoint, secondPoint, extraPoint), drawPyramid(firstPoint, secondPoint, extraPoint, fourthPoint))
+    # plot(drawTetrahedron(firstPoint, secondPoint, extraPoint))
 end
