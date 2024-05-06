@@ -26,7 +26,7 @@ function setCoords()
     return [coords[1, 1] coords[1, 2] coords[1, 3]], [coords[2, 1] coords[2, 2] coords[2, 3]], [coords[3, 1] coords[3, 2] coords[3, 3]]
 end
 
-function buildCube(firstPoint, secondPoint, extraPoint)
+function buildBase(firstPoint, secondPoint, extraPoint)
     norma = norm(vec(secondPoint - firstPoint))
     AB = vec(secondPoint - firstPoint)
     AC = vec(extraPoint - firstPoint)
@@ -37,6 +37,12 @@ function buildCube(firstPoint, secondPoint, extraPoint)
 
     height = cross(AB, vectorForCube)
     height = height / norm(height) * norma
+
+    return thirdPoint, fourthPoint, height
+end
+
+function buildCube(firstPoint, secondPoint, extraPoint)
+    thirdPoint, fourthPoint, height = buildBase(firstPoint, secondPoint, extraPoint)
     fifthPoint = vec(firstPoint) + height
     sixthPoint = vec(secondPoint) + height
     seventhPoint = vec(thirdPoint) + height
@@ -63,29 +69,52 @@ function drawCube(firstPoint, secondPoint, thirdPoint, fourthPoint,
     fifthPoint[2], sixthPoint[2], seventhPoint[2], eighthPoint[2])
 
     cube = scatter(x, y, xlim=(minx - 1, maxx + 1), ylim=(miny - 1, maxy + 1), label="")
+    plot!([firstPoint[1], secondPoint[1], fourthPoint[1], thirdPoint[1], firstPoint[1]], 
+    [firstPoint[2], secondPoint[2], fourthPoint[2], thirdPoint[2], firstPoint[2]], label="")
+    plot!([fifthPoint[1], sixthPoint[1], eighthPoint[1], seventhPoint[1], fifthPoint[1]], 
+    [fifthPoint[2], sixthPoint[2], eighthPoint[2], seventhPoint[2], fifthPoint[2]], label="")
+    plot!([firstPoint[1], fifthPoint[1]], [firstPoint[2], fifthPoint[2]], label="")
+    plot!([secondPoint[1], sixthPoint[1]], [secondPoint[2], sixthPoint[2]], label="")
+    plot!([thirdPoint[1], seventhPoint[1]], [thirdPoint[2], seventhPoint[2]], label="")
+    plot!([fourthPoint[1], eighthPoint[1]], [fourthPoint[2], eighthPoint[2]], label="")
+
     for i in 1:8
-        annotate!(x[i], y[i] + 0.2, ("(" * string(round(x[i], digits=2)) * ", " * string(round(y[i], digits=2)) * ")", 9, :black))
+        annotate!(x[i], y[i] + 0.35, ("(" * string(round(x[i], digits=2)) * ", " * string(round(y[i], digits=2)) * ")", 9, :black))
     end
+
     title!("cube")
     return cube
 end
 
-function drawPyramid(firstPoint, secondPoint, thirdPoint, fourthPoint)
-    norma = norm(vec(thirdPoint - firstPoint))
-    vectorProduct = findVectorProduct(firstPoint, secondPoint, thirdPoint)
-    vectorForPyramid = vectorProduct / norm(vectorProduct) * (norma * sqrt(2) / 2)
-    top = vec(middlePoint) + vectorForPyramid
-    x = [firstPoint[1], secondPoint[1], thirdPoint[1], fourthPoint[1], top[1]]
-    y = [firstPoint[2], secondPoint[2], thirdPoint[2], fourthPoint[2], top[2]]
-    minx = min(firstPoint[1], secondPoint[1], thirdPoint[1], fourthPoint[1], top[1])
-    maxx = max(firstPoint[1], secondPoint[1], thirdPoint[1], fourthPoint[1], top[1])
-    miny = min(firstPoint[2], secondPoint[2], thirdPoint[2], fourthPoint[2], top[2])
-    maxy = max(firstPoint[2], secondPoint[2], thirdPoint[2], fourthPoint[2], top[2])
-    # savefig(plot(scatter(x, y, xlim=(minx - 1, maxx + 1), ylim=(miny - 1, maxy + 1), label="")))
+function buildPyramid(firstPoint, secondPoint, extraPoint)
+    thirdPoint, fourthPoint, height = buildBase(firstPoint, secondPoint, extraPoint)
+    height *= (sqrt(2) / 2)
+    middlePoint = (fourthPoint + vec(firstPoint)) / 2
+    fifthPoint = middlePoint + height
+
+    drawPyramid(firstPoint, secondPoint, thirdPoint, fourthPoint, fifthPoint)
+end
+
+function drawPyramid(firstPoint, secondPoint, thirdPoint, fourthPoint, fifthPoint)
+    x = [firstPoint[1], secondPoint[1], thirdPoint[1], fourthPoint[1], fifthPoint[1]]
+    y = [firstPoint[2], secondPoint[2], thirdPoint[2], fourthPoint[2], fifthPoint[2]]
+    minx = min(firstPoint[1], secondPoint[1], thirdPoint[1], fourthPoint[1], fifthPoint[1])
+    maxx = max(firstPoint[1], secondPoint[1], thirdPoint[1], fourthPoint[1], fifthPoint[1])
+    miny = min(firstPoint[2], secondPoint[2], thirdPoint[2], fourthPoint[2], fifthPoint[2])
+    maxy = max(firstPoint[2], secondPoint[2], thirdPoint[2], fourthPoint[2], fifthPoint[2])
+
     pyramid = scatter(x, y, xlim=(minx - 1, maxx + 1), ylim=(miny - 1, maxy + 1), label="")
+    plot!([firstPoint[1], secondPoint[1], fourthPoint[1], thirdPoint[1], firstPoint[1]],
+    [firstPoint[2], secondPoint[2], fourthPoint[2], thirdPoint[2], firstPoint[2]], label="")
+    plot!([firstPoint[1], fifthPoint[1], fourthPoint[1]], 
+    [firstPoint[2], fifthPoint[2], fourthPoint[2]], label="")
+    plot!([secondPoint[1], fifthPoint[1], thirdPoint[1]], 
+    [secondPoint[2], fifthPoint[2], thirdPoint[2]], label="")
+
     for i in 1:5
-        annotate!(x[i], y[i] + 0.2, ("(" * string(round(x[i], digits=2)) * ", " * string(round(y[i], digits=2)) * ")", 9, :black))
+        annotate!(x[i], y[i] + 0.35, ("(" * string(round(x[i], digits=2)) * ", " * string(round(y[i], digits=2)) * ")", 9, :black))
     end
+
     title!("pyramid")
     return pyramid
 end
@@ -105,7 +134,7 @@ function drawTetrahedron(firstPoint, secondPoint, thirdPoint)
     # savefig(plot(scatter(x, y, xlim=(minx - 1, maxx + 1), ylim=(miny - 1, maxy + 1), label="")), "tetrahedron")
     tetrahedron = scatter(x, y, xlim=(minx - 1, maxx + 1), ylim=(miny - 1, maxy + 1), label="")
     for i in 1:4
-        annotate!(x[i], y[i] + 0.2, ("(" * string(round(x[i], digits=2)) * ", " * string(round(y[i], digits=2)) * ")", 9, :black))
+        annotate!(x[i], y[i] + 0.35, ("(" * string(round(x[i], digits=2)) * ", " * string(round(y[i], digits=2)) * ")", 9, :black))
     end
     title!("tetrahedron")
     return tetrahedron
@@ -116,7 +145,6 @@ firstPoint, secondPoint, extraPoint = setCoords()
 if arePointsOnLine(firstPoint, secondPoint, extraPoint)
     println("Points are on one line")
 else
-    plot(buildCube(firstPoint, secondPoint, extraPoint))
-    # plot(drawCube(firstPoint, secondPoint, extraPoint), drawPyramid(firstPoint, secondPoint, extraPoint, fourthPoint))
-    # plot(drawTetrahedron(firstPoint, secondPoint, extraPoint))
+    plot(buildCube(firstPoint, secondPoint, extraPoint),
+    buildPyramid(firstPoint, secondPoint, extraPoint))
 end
