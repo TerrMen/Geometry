@@ -30,12 +30,12 @@ function buildBase(firstPoint, secondPoint, extraPoint)
     norma = norm(vec(secondPoint - firstPoint))
     AB = vec(secondPoint - firstPoint)
     AC = vec(extraPoint - firstPoint)
-    vectorForCube = cross(AB, cross(AC, AB))
-    vectorForCube = vectorForCube / norm(vectorForCube) * norma
-    thirdPoint = vec(firstPoint) + vectorForCube
+    vector = cross(AB, cross(AC, AB))
+    vector = vector / norm(vector) * norma
+    thirdPoint = vec(firstPoint) + vector
     fourthPoint = thirdPoint + AB
 
-    height = cross(AB, vectorForCube)
+    height = cross(AB, vector)
     height = height / norm(height) * norma
 
     return thirdPoint, fourthPoint, height
@@ -119,23 +119,43 @@ function drawPyramid(firstPoint, secondPoint, thirdPoint, fourthPoint, fifthPoin
     return pyramid
 end
 
-function drawTetrahedron(firstPoint, secondPoint, thirdPoint)
-    norma = norm(vec(thirdPoint - firstPoint))
-    vectorProduct = findVectorProduct(firstPoint, secondPoint, thirdPoint)
-    middlePoint = (firstPoint + secondPoint + thirdPoint) / 3
-    vectorForTetrahedron = vectorProduct / norm(vectorProduct) * (norma * sqrt(6) / 3)
-    top = vec(middlePoint) + vectorForTetrahedron
-    x = [firstPoint[1], secondPoint[1], thirdPoint[1], top[1]]
-    y = [firstPoint[2], secondPoint[2], thirdPoint[2], top[2]]
-    minx = min(firstPoint[1], secondPoint[1], thirdPoint[1], top[1])
-    maxx = max(firstPoint[1], secondPoint[1], thirdPoint[1], top[1])
-    miny = min(firstPoint[2], secondPoint[2], thirdPoint[2], top[2])
-    maxy = max(firstPoint[2], secondPoint[2], thirdPoint[2], top[2])
-    # savefig(plot(scatter(x, y, xlim=(minx - 1, maxx + 1), ylim=(miny - 1, maxy + 1), label="")), "tetrahedron")
+function buildTetrahedron(firstPoint, secondPoint, extraPoint)
+    norma = norm(vec(secondPoint - firstPoint))
+    AB = vec(secondPoint - firstPoint)
+    AC = vec(extraPoint - firstPoint)
+    vector = cross(AB, cross(AC, AB))
+    vector = vector / norm(vector) * norma
+    middleAB = (firstPoint + secondPoint) / 2
+    vector = vector * (sqrt(3) / 2)
+    thirdPoint = vec(middleAB) + vector
+
+    middlePoint = (vec(firstPoint) + vec(secondPoint) + thirdPoint) / 3
+    height = cross(AB, vector)
+    height = height / norm(height) * (norma * (sqrt(6) / 3))
+    fourthPoint = middlePoint + height
+
+    drawTetrahedron(firstPoint, secondPoint, thirdPoint, fourthPoint)
+end
+
+function drawTetrahedron(firstPoint, secondPoint, thirdPoint, fourthPoint)
+    x = [firstPoint[1], secondPoint[1], thirdPoint[1], fourthPoint[1]]
+    y = [firstPoint[2], secondPoint[2], thirdPoint[2], fourthPoint[2]]
+    minx = min(firstPoint[1], secondPoint[1], thirdPoint[1], fourthPoint[1])
+    maxx = max(firstPoint[1], secondPoint[1], thirdPoint[1], fourthPoint[1])
+    miny = min(firstPoint[2], secondPoint[2], thirdPoint[2], fourthPoint[2])
+    maxy = max(firstPoint[2], secondPoint[2], thirdPoint[2], fourthPoint[2])
+
     tetrahedron = scatter(x, y, xlim=(minx - 1, maxx + 1), ylim=(miny - 1, maxy + 1), label="")
+    plot!([firstPoint[1], secondPoint[1], thirdPoint[1], firstPoint[1]],
+    [firstPoint[2], secondPoint[2], thirdPoint[2], firstPoint[2]], label="")
+    plot!([firstPoint[1], fourthPoint[1]], [firstPoint[2], fourthPoint[2]], label="")
+    plot!([secondPoint[1], fourthPoint[1]], [secondPoint[2], fourthPoint[2]], label="")
+    plot!([thirdPoint[1], fourthPoint[1]], [thirdPoint[2], fourthPoint[2]], label="")
+
     for i in 1:4
         annotate!(x[i], y[i] + 0.35, ("(" * string(round(x[i], digits=2)) * ", " * string(round(y[i], digits=2)) * ")", 9, :black))
     end
+
     title!("tetrahedron")
     return tetrahedron
 end
@@ -146,5 +166,6 @@ if arePointsOnLine(firstPoint, secondPoint, extraPoint)
     println("Points are on one line")
 else
     plot(buildCube(firstPoint, secondPoint, extraPoint),
-    buildPyramid(firstPoint, secondPoint, extraPoint))
+    buildPyramid(firstPoint, secondPoint, extraPoint),
+    buildTetrahedron(firstPoint, secondPoint, extraPoint), size=(1000, 1000))
 end
